@@ -55,10 +55,10 @@ function handleSearchForm(){
     $('#search-form').submit(event => {
         event.preventDefault();
         const distanceToLook = $(`#distance-list option:selected`).val();
-        const origin = $('#starting-location').val.split(" ").join("+");
+        const origin = $('#starting-location').val().split(" ").join("+");
         const results = [];
         breweries.forEach(brewery => {
-            const destination = `${brewery.street.split(" ").join("+")}+${postal_code}`
+            const destination = `${brewery.street.split(" ").join("+")}+${brewery.postal_code}`
             if(checkDistances(origin, destination) < distanceToLook){
                 results.push(brewery);
             }
