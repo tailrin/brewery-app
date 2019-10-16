@@ -41,7 +41,7 @@ function checkDistances(origin, destination){
     const key="AIzaSyB5VmGBC57nwC2jngt1l-iFo5OsTwxtqXs"
     const googleURL = `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${origin}&destinations=${destination}&key=${key}`
     let distance = 0
-    fetch(googleURL).then(response => response.json()).then(responseJson => {
+    fetch(googleURL, {mode:'cors', headers: { 'Access-Control-Allow-Origin':'*' } }).then(response => response.json()).then(responseJson => {
         distance = responseJson.rows[0].elements[0].distance.text
     })
     return distance;
