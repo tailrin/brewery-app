@@ -19,21 +19,52 @@ function handleStateForm(){
         const chosenState = $(`#state-list option:selected`).val();
     
         for (let i = 1; i < 20; i++){
-            const url = `https://api.openbrewerydb.org/breweries?by_state=${chosenState}&page=${i}&per_page=50`;
-            fetch(url).then(response => response.json()).then(responseJson => {
+            const breweryURL = `https://api.openbrewerydb.org/breweries?by_state=${chosenState}&page=${i}&per_page=50`;
+            fetch(breweryURL).then(response => response.json()).then(responseJson => {
                 responseJson.forEach(brewery => {
+
                     if (responseJson.length === 0){
                         i = 20;
                     } else{
                         breweries.push(brewery);
                     }
+                });
             });
-        });
-        console.log(breweries);
         }
-
+        $('#state-form').addClass('hidden');
+        $('#search-form').removeClass('hidden');
     });
     
+}
+
+function checkDistances(origin, destination){
+    const key="AIzaSyCLMhUagwheSHfpT4NtFR3VXYNPUsEpklU"
+    const googleURL = `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${origin}&destinations=${destination}`
+    let distance = 0
+    fetch(googleURL).then(response => response.json()).then(responseJson => {
+        distance = responseJson.rows[0].elements[0].distance.text
+    })
+    return distance;
+}
+
+function displayResults(results){
+
+}
+
+function handleSearchForm(){
+    $('#search-form').submit(event => {
+        event.preventDefault();
+        const distanceToLook = $(`#distance-list option:selected`).val();
+        const origin = $('#starting-location').val.split(" ").join("+");
+        const results = [];
+        breweries.forEach(brewery => {
+            const destination = `${brewery.street.split(" ").join("+")}+${postal_code}`
+            if(checkDistances(origin, destination) < distanceToLook){
+                results.push(brewery);
+            }
+        });
+        displayResults();
+    })
 }
 
 
@@ -42,3 +73,4 @@ function handleStateForm(){
 
 $(populateStates());
 $(handleStateForm());
+$(handleSearchForm());
