@@ -90,7 +90,7 @@ function getIndex(id){
 
 
 
-function displayResults(results){
+function displayResults(){
     const arr = [];
     results.forEach(result => {
         arr.push(createResultItem(result));
