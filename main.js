@@ -79,6 +79,7 @@ function callback(response, brewery) {
     const distanceToLook = brewery.distanceToLook;
     const distance = parseInt(response.rows[0].elements[0].distance.text.split(" ")[0].split(",").join(""), 10);
     if(distance <= distanceToLook){
+      brewery.distance = distance;  
       displayResults(brewery);
     }
 }
@@ -99,13 +100,15 @@ function createResultItem(result){
     console.log("item was created")
     return `<li>
     <h3>${result.name}</h3>
-    <p><a href="https://www.google.com/maps/search/?api=1&query=${address}">
-    ${result.street}<br>
-    ${result.city}<br>
-    ${result.state}
-    </a><br>
-    <a href="${result.website_url}">Website</a>
-    <a href="tel:${result.phone}">${result.phone}</a>
+    <h4>Brewery Type: ${result.brewery_type}</h4>
+    <p class="address-paragraph"><a href="https://www.google.com/maps/search/?api=1&query=${address}">
+    ${result.street}</a><br>
+    ${result.city}, ${result.state}
+    </p>
+    <p>
+    <a href="${result.website_url}">${result.website_url}</a><br>
+    <a href="tel:${result.phone}">Phone Number: ${result.phone}</a><br>
+    Distance: ${result.distance} miles
     </p>
     </li>`
 }
