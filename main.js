@@ -101,13 +101,11 @@ function createResultItem(result){
     return `<li>
     <h3>${result.name}</h3>
     <h4>Brewery Type: ${result.brewery_type}</h4>
-    <p class="address-paragraph"><a href="https://www.google.com/maps/search/?api=1&query=${address}">
-    ${result.street}</a><br>
-    ${result.city}, ${result.state}
-    </p>
-    <p>
+    <p><a href="https://www.google.com/maps/search/?api=1&query=${address}">
+    ${result.street}, ${result.city}, ${result.state}</a><br>
     <a href="${result.website_url}">${result.website_url}</a><br>
-    <a href="tel:${result.phone}">Phone Number: ${result.phone}</a><br>
+    <br>
+    Phone Number: <a href="tel:${result.phone}">${result.phone}</a><br>
     Distance: ${result.distance} miles
     </p>
     </li>`
