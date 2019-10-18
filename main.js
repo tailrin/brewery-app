@@ -40,6 +40,10 @@ function handleStateForm(){
         $('#state-form').addClass('hidden');
         $('#search-form').removeClass('hidden');
     });
+
+    $('#starting-location').click(event => {
+        $(event.currentTarget).val('');
+    });
     
 }
 
