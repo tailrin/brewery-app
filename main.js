@@ -1,5 +1,12 @@
-// Global Variable
+// Global Variables
 const breweries = [];
+const results =[];
+
+function loadGoogleMapsLibrary(){
+    $.getScript(window.atob("aHR0cHM6Ly9tYXBzLmdvb2dsZWFwaXMuY29tL21hcHMvYXBpL2pzP2tleT1BSXphU3lDTE1oVWFnd2hlU0hmcFQ0TnRGUjNWWFlOUFVzRXBrbFU="), function () {
+      console.log("script loaded")
+     });
+ }
 
 function populateStates(){
     const arr =[]
@@ -37,15 +44,50 @@ function handleStateForm(){
     
 }
 
-function checkDistances(origin, destination){
-    const key="AIzaSyB5VmGBC57nwC2jngt1l-iFo5OsTwxtqXs"
-    const googleURL = `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${origin}&destinations=${destination}&key=${key}`
-    let distance = 0
-    fetch(googleURL, {mode:'cors', headers: { 'Access-Control-Allow-Origin':'*' } }).then(response => response.json()).then(responseJson => {
-        distance = responseJson.rows[0].elements[0].distance.text
-    })
-    return distance;
+function handleBreweries(){
+    const origin = $('#starting-location').val();
+    breweries.forEach(brewery => {
+        brewery.distanceToLook = $(`#distance-list option:selected`).val();
+        const destination = `${brewery.street}, ${brewery.postal_code}`
+        checkDistance(origin, destination, brewery).then(function(response){
+        callback(response, brewery);
+      });
+    });
+  }
+
+function checkDistance(origin, destination, brewery){
+  const service = new google.maps.DistanceMatrixService();
+  const dfd = $.Deferred();
+  service.getDistanceMatrix(
+  {
+    origins: [origin],
+    destinations: [destination],
+    travelMode: 'DRIVING',
+    unitSystem: google.maps.UnitSystem.IMPERIAL
+  }, function(response, status){
+        if (status == google.maps.DistanceMatrixStatus.OK){
+            dfd.resolve(response);
+        }else{
+            dfd.reject(status);
+        }
+  });
+  return dfd.promise();
 }
+
+function callback(response, brewery) {
+    let breweryIndex = getIndex(brewery.id);
+    const distanceToLook = brewery.distanceToLook;
+    const distance = parseInt(response.rows[0].elements[0].distance.text.split(" ")[0].split(",").join(""), 10);
+    if(distance <= distanceToLook){
+      results.push(breweries[breweryIndex]);
+    }
+}
+
+function getIndex(id){
+    return breweries.findIndex(brewery => brewery.id === id);
+}
+
+
 
 function displayResults(results){
 
@@ -54,15 +96,7 @@ function displayResults(results){
 function handleSearchForm(){
     $('#search-form').submit(event => {
         event.preventDefault();
-        const distanceToLook = $(`#distance-list option:selected`).val();
-        const origin = $('#starting-location').val().split(" ").join("+");
-        const results = [];
-        breweries.forEach(brewery => {
-            const destination = `${brewery.street.split(" ").join("+")}+${brewery.postal_code}`
-            if(checkDistances(origin, destination) < distanceToLook){
-                results.push(brewery);
-            }
-        });
+        handleBreweries();
         displayResults();
     })
 }
@@ -72,5 +106,21 @@ function handleSearchForm(){
 
 
 $(populateStates());
+$(loadGoogleMapsLibrary());
 $(handleStateForm());
 $(handleSearchForm());
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
