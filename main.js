@@ -53,6 +53,7 @@ function handleBreweries(){
         callback(response, brewery);
       });
     });
+    displayResults();
   }
 
 function checkDistance(origin, destination, brewery){
@@ -90,14 +91,34 @@ function getIndex(id){
 
 
 function displayResults(results){
+    const arr = [];
+    results.forEach(result => {
+        arr.push(createResultItem(result));
+    })
+    $('#results-list').html(arr.join(""));
+    $('#display-results').removeClass("hidden");
+}
 
+function createResultItem(result){
+    const address = `${result.street.split(" ").join("+")}+${result.postal_code}`
+    return `<li>
+    <h3>${name}</h3>
+    <p><a href="https://www.google.com/maps/search/?api=1&query=${address}">
+    ${result.street}<br>
+    ${result.city}<br>
+    ${result.state}
+    </a><br>
+    <a href="${result.website_url}">Website</a>
+    <a href="tel:${result.phone}">${result.phone}</a>
+    </p>
+    </li>`
 }
 
 function handleSearchForm(){
     $('#search-form').submit(event => {
         event.preventDefault();
         handleBreweries();
-        displayResults();
+        
     })
 }
 
