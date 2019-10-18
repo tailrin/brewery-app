@@ -1,6 +1,5 @@
 // Global Variables
 const breweries = [];
-const results =[];
 
 function loadGoogleMapsLibrary(){
     $.getScript(window.atob("aHR0cHM6Ly9tYXBzLmdvb2dsZWFwaXMuY29tL21hcHMvYXBpL2pzP2tleT1BSXphU3lDTE1oVWFnd2hlU0hmcFQ0TnRGUjNWWFlOUFVzRXBrbFU="), function () {
@@ -51,9 +50,10 @@ function handleBreweries(){
         const destination = `${brewery.street}, ${brewery.postal_code}`
         checkDistance(origin, destination, brewery).then(function(response){
         callback(response, brewery);
+       
       });
     });
-    displayResults();
+    
   }
 
 function checkDistance(origin, destination, brewery){
@@ -76,11 +76,10 @@ function checkDistance(origin, destination, brewery){
 }
 
 function callback(response, brewery) {
-    let breweryIndex = getIndex(brewery.id);
     const distanceToLook = brewery.distanceToLook;
     const distance = parseInt(response.rows[0].elements[0].distance.text.split(" ")[0].split(",").join(""), 10);
     if(distance <= distanceToLook){
-      results.push(breweries[breweryIndex]);
+      displayResults(brewery);
     }
 }
 
@@ -90,19 +89,16 @@ function getIndex(id){
 
 
 
-function displayResults(){
-    const arr = [];
-    results.forEach(result => {
-        arr.push(createResultItem(result));
-    })
-    $('#results-list').html(arr.join(""));
+function displayResults(result){
+    $('#results-list').append(createResultItem(result));
     $('#display-results').removeClass("hidden");
 }
 
 function createResultItem(result){
     const address = `${result.street.split(" ").join("+")}+${result.postal_code}`
+    console.log("item was created")
     return `<li>
-    <h3>${name}</h3>
+    <h3>${result.name}</h3>
     <p><a href="https://www.google.com/maps/search/?api=1&query=${address}">
     ${result.street}<br>
     ${result.city}<br>
