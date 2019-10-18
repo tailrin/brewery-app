@@ -48,7 +48,7 @@ function handleStateForm(){
 }
 
 function handleBreweries(){
-    ('#results-list').empty();
+    $('#results-list').empty();
     const origin = $('#starting-location').val();
     breweries.forEach(brewery => {
         brewery.distanceToLook = $(`#distance-list option:selected`).val();
