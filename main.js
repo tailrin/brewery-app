@@ -48,14 +48,16 @@ function handleStateForm(){
 }
 
 function handleBreweries(){
-    $('#results-list').empty();
+    //$('#results-list').empty();
     const origin = $('#starting-location').val();
+    const results = [];
     breweries.forEach(brewery => {
         brewery.distanceToLook = $(`#distance-list option:selected`).val();
         const destination = `${brewery.street}, ${brewery.postal_code}`
         checkDistance(origin, destination, brewery).then(function(response){
-        callback(response, brewery);
-       
+        if(callback(response, brewery)){results.push(callback(response, brewery));
+        displayResults(results);}
+        
       });
     });
     
@@ -85,7 +87,7 @@ function callback(response, brewery) {
     const distance = parseInt(response.rows[0].elements[0].distance.text.split(" ")[0].split(",").join(""), 10);
     if(distance <= distanceToLook){
       brewery.distance = distance;  
-      displayResults(brewery);
+      return brewery;
     }
 }
 
@@ -95,9 +97,12 @@ function getIndex(id){
 
 
 
-function displayResults(result){
-
-    $('#results-list').append(createResultItem(result));
+function displayResults(results){
+    const arr = [];
+    results.forEach(result => {
+        arr.push(createResultItem(result));
+    });
+    $('#results-list').html(arr.join(""));
     $('#display-results').removeClass("hidden");
 }
 
@@ -120,6 +125,7 @@ function createResultItem(result){
 function handleSearchForm(){
     $('#search-form').submit(event => {
         event.preventDefault();
+        $('#results-list').empty();
         handleBreweries();
         
     })
