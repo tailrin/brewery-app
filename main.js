@@ -54,7 +54,7 @@ function handleBreweries(){
     breweries.forEach(brewery => {
         brewery.distanceToLook = $(`#distance-list option:selected`).val();
         const destination = `${brewery.street}, ${brewery.postal_code}`
-        checkDistance(origin, destination, brewery).then(function(response){
+        checkDistance(origin, destination).then(function(response){
         if(callback(response, brewery)){results.push(callback(response, brewery));
         displayResults(results);}
         
@@ -63,7 +63,7 @@ function handleBreweries(){
     
   }
 
-function checkDistance(origin, destination, brewery){
+function checkDistance(origin, destination){
   const service = new google.maps.DistanceMatrixService();
   const dfd = $.Deferred();
   service.getDistanceMatrix(
@@ -125,8 +125,13 @@ function createResultItem(result){
 function handleSearchForm(){
     $('#search-form').submit(event => {
         event.preventDefault();
-        $('#results-list').empty();
-        handleBreweries();
+        const address = $('#starting-location').val();
+        if(address === "Starting location"){
+            $('staring-location-label').html('<span class="red">This is required information: </span>Please put in a valid address');
+        }else{
+            handleBreweries();
+        }
+        
         
     })
 }
