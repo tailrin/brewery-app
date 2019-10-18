@@ -95,6 +95,7 @@ function getIndex(id){
 
 
 function displayResults(result){
+
     $('#results-list').append(createResultItem(result));
     $('#display-results').removeClass("hidden");
 }
@@ -118,6 +119,7 @@ function createResultItem(result){
 function handleSearchForm(){
     $('#search-form').submit(event => {
         event.preventDefault();
+        ('#results-list').empty();
         handleBreweries();
         
     })
