@@ -119,6 +119,9 @@ function displayResults(results){
     }
     $('#display-results').removeClass("hidden");
     $('.cta-button').val('Click to start');
+    setTimeout(function() { 
+        $('.cta-button').disabled = false;
+     }, 500);
 }
 
 function createResultItem(result){
@@ -148,6 +151,7 @@ function handleSearchForm(){
         event.preventDefault();
         const address = $('#starting-location').val();
         $('.cta-button').val('Loading, please wait...');
+        $('.cta-button').disabled = true;
         handleBreweries();
     })
     $('.go_back').click(function (){
