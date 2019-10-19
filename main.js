@@ -46,10 +46,7 @@ function handleStateForm(){
         initAutoComplete();
     });
 
-    // $('#starting-location').click(event => {
-    //     $(event.currentTarget).val('');
-    //     $(event.currentTarget).removeClass('gray');
-    // });
+
     
 }
 
