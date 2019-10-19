@@ -82,6 +82,10 @@ input#starting-location {
     margin-top: 20px;
 }
 
+input:focus{
+    outline: none;
+}
+
 .left-text{
     align-self: flex-start;
     margin-left: 10%;
