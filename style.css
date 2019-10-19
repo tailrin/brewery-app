@@ -96,6 +96,14 @@ p {
     margin-top: 30px;
 }
 
+.red {
+    color: red;
+}
+
+.gray {
+    color: grey;
+}
+
 
 
 select#state-list,

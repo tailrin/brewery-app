@@ -28,7 +28,6 @@ function handleStateForm(){
             const breweryURL = `https://api.openbrewerydb.org/breweries?by_state=${chosenState}&page=${i}&per_page=50`;
             fetch(breweryURL).then(response => response.json()).then(responseJson => {
                 responseJson.forEach(brewery => {
-
                     if (responseJson.length === 0){
                         i = 20;
                     } else{
@@ -43,22 +42,28 @@ function handleStateForm(){
 
     $('#starting-location').click(event => {
         $(event.currentTarget).val('');
+        $(event.currentTarget).removeClass('gray');
     });
     
 }
 
 function handleBreweries(){
-    //$('#results-list').empty();
     const origin = $('#starting-location').val();
     const results = [];
     breweries.forEach(brewery => {
         brewery.distanceToLook = $(`#distance-list option:selected`).val();
         const destination = `${brewery.street}, ${brewery.postal_code}`
         checkDistance(origin, destination).then(function(response){
-        if(callback(response, brewery)){results.push(callback(response, brewery));
-        displayResults(results);}
-        
-      });
+            if(callback(response, brewery)){
+                results.push(callback(response, brewery));
+                displayResults(results);
+            }
+        }).catch(function(err){
+            console.log(err);
+            if(`${err}`.includes('TypeError: Cannot read property')){
+                $('#starting-location-label').html('<span class="red">Address was not found: </span>Please try another address');
+            }
+        });
     });
     
   }
@@ -108,7 +113,6 @@ function displayResults(results){
 
 function createResultItem(result){
     const address = `${result.street.split(" ").join("+")}+${result.postal_code}`
-    console.log("item was created")
     return `<li>
     <h3>${result.name}</h3>
     <h4>Brewery Type: ${result.brewery_type}</h4>
@@ -127,12 +131,11 @@ function handleSearchForm(){
         event.preventDefault();
         const address = $('#starting-location').val();
         if(address === "Starting location"){
-            $('staring-location-label').html('<span class="red">This is required information: </span>Please put in a valid address');
+            $('#starting-location-label').html('<span class="red">This is required information: </span>Please put in a valid address');
         }else{
+            $('#starting-location-label').html('Starting location')
             handleBreweries();
         }
-        
-        
     })
 }
 
