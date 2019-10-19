@@ -106,7 +106,6 @@ function getIndex(id){
 function displayResults(results){
     const arr = [];
     if(results.length === 0){
-        console.log("results list is empty")
         $('#results-list').html(`<li><h3>No results to display</h3></li>`)
         $('#display-results').removeClass("hidden");
     }else{
