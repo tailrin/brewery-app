@@ -124,7 +124,7 @@ function createResultItem(result){
     <h4>Brewery Type: ${result.brewery_type}</h4>
     <p><a href="https://www.google.com/maps/search/?api=1&query=${address}">
     ${result.street}, ${result.city}, ${result.state}</a><br>
-    <a href="${result.website_url}">${result.website_url}</a><br>
+    <a href="${result.website_url}" class="website">${result.website_url}</a><br>
     <br>
     Phone Number: <a href="tel:${result.phone}">${result.phone}</a><br>
     Distance: ${result.distance} miles
