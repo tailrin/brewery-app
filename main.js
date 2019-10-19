@@ -112,6 +112,9 @@ function displayResults(results){
     if(results.length === 0){
         $('#results-list').html(`<li><h3>No results to display</h3></li>`)
     }else{
+        results.sort(function(a, b) {
+            return a.distance - b.distance;
+        });
         results.forEach(result => {
             arr.push(createResultItem(result));
         });
@@ -125,9 +128,9 @@ function createResultItem(result){
     return `<li>
     <h3>${result.name}</h3>
     <h4>Brewery Type: ${result.brewery_type}</h4>
-    <p><a href="https://www.google.com/maps/search/?api=1&query=${address}">
+    <p><a href="https://www.google.com/maps/search/?api=1&query=${address}" target="_blank">
     ${result.street}, ${result.city}, ${result.state}</a><br>
-    <a href="${result.website_url}" class="website">${result.website_url}</a><br>
+    <a href="${result.website_url}" class="website" target="_blank">${result.website_url}</a><br>
     <br>
     Phone Number: <a href="tel:${result.phone}">${result.phone}</a><br>
     Distance: ${result.distance} miles
