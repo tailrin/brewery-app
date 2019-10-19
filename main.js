@@ -122,17 +122,24 @@ function displayResults(results){
 
 function createResultItem(result){
     const address = `${result.street.split(" ").join("+")}+${result.postal_code}`
-    return `<li>
-    <h3>${result.name}</h3>
-    <h4>Brewery Type: ${result.brewery_type}</h4>
-    <p><a href="https://www.google.com/maps/search/?api=1&query=${address}" target="_blank">
-    ${result.street}, ${result.city}, ${result.state}</a><br>
-    <a href="${result.website_url}" class="website" target="_blank">${result.website_url}</a><br>
-    <br>
-    Phone Number: <a href="tel:${result.phone}">${result.phone}</a><br>
-    Distance: ${result.distance} miles
-    </p>
-    </li>`
+    const arr = [`<li>`];
+    if(result.website_url){
+        arr.push(`<a src="${result.website_url}"><h3>${result.name}</h3></a>`)
+    }else{
+        arr.push(`<h3>${result.name}</h3>`)
+    }
+    if(result.brewery_type){arr.push(`<h4>Brewery Type: ${result.brewery_type}</h4>`)}
+    if(result.street){
+        arr.push(`<p><a href="https://www.google.com/maps/search/?api=1&query=${address}" target="_blank">
+        ${result.street}, ${result.city}, ${result.state}</a><br>`)
+    }else{
+        arr.push(`<p><a href="https://www.google.com/maps/search/?api=1&query=${address}" target="_blank">${result.city}, ${result.state}</a><br>`)
+    }
+    if(result.website_url){arr.push(`<a href="${result.website_url}" class="website" target="_blank">${result.website_url}</a><br>`)}
+    if(result.phone){arr.push(`Phone Number: <a href="tel:${result.phone}">${formatPhoneNumber(result.phone)}</a><br></br>`)}
+    arr.push(`Distance: ${result.distance} miles</p></li>`)
+    return arr.join("");
+
 }
 
 function handleSearchForm(){
@@ -148,7 +155,9 @@ function handleSearchForm(){
     })
 }
 
-
+function formatPhoneNumber(phoneNumber){
+    return `(${phoneNumber.substring(0, 3)}) ${phoneNumber.substring(3,6)}-${phoneNumber.substring(6)}`
+}
 
 
 
