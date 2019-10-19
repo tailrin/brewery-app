@@ -14,7 +14,7 @@ function loadGoogleMapsLibrary(){
   }
 
   
-
+// Create list for state selection dropdown
 function populateStates(){
     const arr =[]
     states.forEach(state => {
@@ -23,16 +23,26 @@ function populateStates(){
     $('#state-list').html(arr.join(""));
 }
 
+
 function createSelection(state){
     return `<option value="${state.name.toLowerCase().split(" ").join("_")}">${state.name}</option>`;
 }
+
+// Convert snake case to title case
+function makeTitleCase (myState) {
+	myState = myState.toLowerCase().split('_');
+	for (var i = 0; i < myState.length; i++) {
+		myState[i] = myState[i].charAt(0).toUpperCase() + myState[i].slice(1);
+	}
+	return myState.join(' ');
+};
+
 
 
 function handleStateForm(){
     $('#state-form').submit(event =>{
         event.preventDefault();
         const chosenState = $(`#state-list option:selected`).val();
-    
         for (let i = 1; i < 20; i++){
             const breweryURL = `https://api.openbrewerydb.org/breweries?by_state=${chosenState}&page=${i}&per_page=50`;
             fetch(breweryURL).then(response => response.json()).then(responseJson => {
@@ -48,7 +58,8 @@ function handleStateForm(){
         $('#state-form').addClass('hidden');
         $('#search-form').removeClass('hidden');
         initAutoComplete();
-        $('#starting-label').prepend(`Enter your starting address in <span class="capitalize">${chosenState}</span>.`);
+        let instructionState = makeTitleCase(chosenState);
+        $('#starting-label').text(`Enter your starting address in ${instructionState}.`);
     });
 
 
@@ -107,8 +118,6 @@ function getIndex(id){
     return breweries.findIndex(brewery => brewery.id === id);
 }
 
-
-
 function displayResults(results){
     const arr = [];
     if(results.length === 0){
@@ -130,6 +139,7 @@ function displayResults(results){
      
 }
 
+// Check if values exist for each result key and print only if they exist
 function createResultItem(result){
     const address = `${result.street.split(" ").join("+")}+${result.postal_code}`
     const arr = [`<li>`];
@@ -151,6 +161,7 @@ function createResultItem(result){
     return arr.join("");
 
 }
+
 
 function handleSearchForm(){
     $('#search-form').submit(event => {
@@ -175,7 +186,6 @@ function handleSearchForm(){
 function formatPhoneNumber(phoneNumber){
     return `(${phoneNumber.substring(0, 3)}) ${phoneNumber.substring(3,6)}-${phoneNumber.substring(6)}`
 }
-
 
 
 $(populateStates());
