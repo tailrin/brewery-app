@@ -2,10 +2,15 @@
 const breweries = [];
 
 function loadGoogleMapsLibrary(){
-    $.getScript(window.atob("aHR0cHM6Ly9tYXBzLmdvb2dsZWFwaXMuY29tL21hcHMvYXBpL2pzP2tleT1BSXphU3lCWlJWMEJmM2s5N1M0dnpsOXc1UDlJV1hqM0djeFNRNE0="), function () {
+    $.getScript(window.atob("aHR0cHM6Ly9tYXBzLmdvb2dsZWFwaXMuY29tL21hcHMvYXBpL2pzP2tleT1BSXphU3lCWlJWMEJmM2s5N1M0dnpsOXc1UDlJV1hqM0djeFNRNE0mbGlicmFyaWVzPXBsYWNlcw=="), function () {
       console.log("script loaded")
      });
  }
+
+ function initAutoComplete(){
+    const autocomplete = new google.maps.places.Autocomplete(document.getElementById("starting-location"), {types: ['geocode']});
+    autocomplete.setFields(['address_component']);
+  }
 
 function populateStates(){
     const arr =[]
@@ -38,12 +43,13 @@ function handleStateForm(){
         }
         $('#state-form').addClass('hidden');
         $('#search-form').removeClass('hidden');
+        initAutoComplete();
     });
 
-    $('#starting-location').click(event => {
-        $(event.currentTarget).val('');
-        $(event.currentTarget).removeClass('gray');
-    });
+    // $('#starting-location').click(event => {
+    //     $(event.currentTarget).val('');
+    //     $(event.currentTarget).removeClass('gray');
+    // });
     
 }
 
@@ -56,10 +62,8 @@ function handleBreweries(){
         checkDistance(origin, destination).then(function(response){
             if(callback(response, brewery)){
                 results.push(callback(response, brewery));
-                displayResults(results);
-            }else{
-                displayResults(results);
             }
+            displayResults(results);
         }).catch(function(err){
             if(`${err}`.includes('TypeError: Cannot read property')){
                 $('#starting-location-label').html('<span class="red">Address was not found: </span>Please try another address');
@@ -107,7 +111,6 @@ function displayResults(results){
     const arr = [];
     if(results.length === 0){
         $('#results-list').html(`<li><h3>No results to display</h3></li>`)
-        $('#display-results').removeClass("hidden");
     }else{
         results.forEach(result => {
             arr.push(createResultItem(result));
