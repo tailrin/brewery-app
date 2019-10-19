@@ -136,7 +136,7 @@ function createResultItem(result){
         arr.push(`<p><a href="https://www.google.com/maps/search/?api=1&query=${address}" target="_blank">${result.city}, ${result.state}</a><br>`)
     }
     if(result.website_url){arr.push(`<a href="${result.website_url}" class="website" target="_blank">${result.website_url}</a><br>`)}
-    if(result.phone){arr.push(`Phone Number: <a href="tel:${result.phone}">${formatPhoneNumber(result.phone)}</a><br></br>`)}
+    if(result.phone){arr.push(`Phone: <a href="tel:${result.phone}">${formatPhoneNumber(result.phone)}</a><br></br>`)}
     arr.push(`Distance: ${result.distance} miles</p></li>`)
     return arr.join("");
 
