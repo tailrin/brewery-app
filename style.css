@@ -12,6 +12,10 @@ a:hover{
     color: #d25241;
 }
 
+.image{
+    cursor: pointer;
+}
+
 
 .cta-button{
     background-color: transparent;
@@ -22,6 +26,7 @@ a:hover{
     display: block;
     margin-top: 20px;
     font-size: 20px;
+    cursor: pointer;
 
 }
 
@@ -38,6 +43,14 @@ form {
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+.go_back{
+    display: inline;
+    color: #277ad6;
+    text-align: right;
+    padding-top: 20px;
+    cursor: pointer;
 }
 
 h3{

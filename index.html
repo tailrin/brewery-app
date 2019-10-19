@@ -11,7 +11,7 @@
 <body>
     <div class="container">
         <h1>Brewery App</h1>
-        <img class="image" src="img/beer.png" alt="two beer bottles clinking">
+        <img class="image" id="beer-icon" src="img/beer.png" alt="two beer bottles clinking">
         <form id="state-form">
             <h2>Looking for a nearby brewery?</h2>
             <label for="state-list">First, select the state you want to search.</label>
@@ -19,7 +19,7 @@
             <input type="submit" value="Next" class="cta-button width-80">
         </form>
         <form id="search-form" class="hidden">
-            <label for="starting-location">What's your starting address?</label>
+            <div class="wrapper"><label for="starting-location">What's your starting address?</label></div>
             <input type="text"  class="width-80 margin-30" name="starting-location" id="starting-location" placeholder="Starting location" required>
             <label for="distance">Distance</label>
             <select class="width-80 margin-15" name="distance" id="distance-list">
@@ -30,6 +30,7 @@
                 <option value="50">50 miles</option>
             </select>
             <input class="cta-button width-80" type="submit" value="Click To Start">
+            <span class="go_back">Choose another state</span>
          </form>
 
          <section id="display-results" class="hidden left-text">

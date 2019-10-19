@@ -118,6 +118,7 @@ function displayResults(results){
         $('#results-list').html(arr.join(""));
     }
     $('#display-results').removeClass("hidden");
+    $('.cta-button').val('Click to start');
 }
 
 function createResultItem(result){
@@ -146,12 +147,18 @@ function handleSearchForm(){
     $('#search-form').submit(event => {
         event.preventDefault();
         const address = $('#starting-location').val();
-        if(address === "Starting location"){
-            $('#starting-location-label').html('<span class="red">This is required information: </span>Please put in a valid address');
-        }else{
-            $('#starting-location-label').html('Starting location')
-            handleBreweries();
-        }
+        $('.cta-button').val('Loading, please wait...');
+        handleBreweries();
+    })
+    $('.go_back').click(function (){
+        $('#search-form').addClass('hidden');
+        $('#state-form').removeClass('hidden');
+        $('#display-results').addClass('hidden');
+    })
+    $('#beer-icon').click(function (){
+        $('#search-form').addClass('hidden');
+        $('#state-form').removeClass('hidden');
+        $('#display-results').addClass('hidden');
     })
 }
 
