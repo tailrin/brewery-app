@@ -74,12 +74,14 @@ h3{
     cursor: pointer;
 }
 
-
 input#starting-location {
-    height: 30px;
     font-size: 18px;
-    margin-bottom: 30px;
+    border: 2px solid #277ad6;
+    padding-top: 20px;
+    padding-left: 10px;
+    padding-bottom: 20px;
     margin-top: 20px;
+    margin-bottom: 10px;
 }
 
 input:focus{
