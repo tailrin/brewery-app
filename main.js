@@ -104,10 +104,14 @@ function getIndex(id){
 
 function displayResults(results){
     const arr = [];
-    results.forEach(result => {
-        arr.push(createResultItem(result));
-    });
-    $('#results-list').html(arr.join(""));
+    if(results.length === 0){
+        $('#results-list').html(`<h3>No results to display</h3>`)
+    }else{
+        results.forEach(result => {
+            arr.push(createResultItem(result));
+        });
+        $('#results-list').html(arr.join(""));
+    }
     $('#display-results').removeClass("hidden");
 }
 
