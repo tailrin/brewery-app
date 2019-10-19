@@ -7,10 +7,13 @@ function loadGoogleMapsLibrary(){
      });
  }
 
+ 
  function initAutoComplete(){
     const autocomplete = new google.maps.places.Autocomplete(document.getElementById("starting-location"), {types: ['geocode']});
     autocomplete.setFields(['address_component']);
   }
+
+  
 
 function populateStates(){
     const arr =[]
@@ -23,6 +26,7 @@ function populateStates(){
 function createSelection(state){
     return `<option value="${state.name.toLowerCase().split(" ").join("_")}">${state.name}</option>`;
 }
+
 
 function handleStateForm(){
     $('#state-form').submit(event =>{
@@ -44,6 +48,7 @@ function handleStateForm(){
         $('#state-form').addClass('hidden');
         $('#search-form').removeClass('hidden');
         initAutoComplete();
+        $('#starting-label').prepend(`Enter your starting address in <span class="capitalize">${chosenState}</span>.`);
     });
 
 
@@ -121,7 +126,8 @@ function displayResults(results){
     $('.cta-button').val('Click to start');
     setTimeout(function() { 
         $('.cta-button').disabled = false;
-     }, 500);
+     }, 1000);
+     
 }
 
 function createResultItem(result){
