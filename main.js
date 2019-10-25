@@ -1,16 +1,22 @@
 // Global Variables
 const breweries = [];
+const key = "QXBDYUx5MVA0dmRFVWNGQWxWWTRLQ1U0Q1VCMV84Q1NUQlNld0JZbGJwS2xpSDVxNTdiNHpkV29fdFdYdFJkaA=="
 
-function loadGoogleMapsLibrary(){
-    $.getScript(window.atob("aHR0cHM6Ly9tYXBzLmdvb2dsZWFwaXMuY29tL21hcHMvYXBpL2pzP2tleT1BSXphU3lCWlJWMEJmM2s5N1M0dnpsOXc1UDlJV1hqM0djeFNRNE0mbGlicmFyaWVzPXBsYWNlcw=="), function () {
-      console.log("script loaded")
-     });
- }
+function sleep(milliseconds) {
+    var start = new Date().getTime();
+    for (var i = 0; i < 1e7; i++) {
+        if ((new Date().getTime() - start) > milliseconds){
+            break;
+        }
+    }
+}
 
- 
- function initAutoComplete(){
-    const autocomplete = new google.maps.places.Autocomplete(document.getElementById("starting-location"), {types: ['geocode']});
-    autocomplete.setFields(['address_component']);
+Array.prototype.clone = function() {
+	return this.slice(0);
+};
+
+ function getStateCode(stateName){
+    return states[states.findIndex(state => state.name == stateName)].code
   }
 
   
@@ -42,6 +48,7 @@ function makeTitleCase (myState) {
 function handleStateForm(){
     $('#state-form').submit(event =>{
         event.preventDefault();
+        breweries.splice(0, breweries.length);
         const chosenState = $(`#state-list option:selected`).val();
         for (let i = 1; i < 20; i++){
             const breweryURL = `https://api.openbrewerydb.org/breweries?by_state=${chosenState}&page=${i}&per_page=50`;
@@ -49,7 +56,7 @@ function handleStateForm(){
                 responseJson.forEach(brewery => {
                     if (responseJson.length === 0){
                         i = 20;
-                    } else{
+                    }else{
                         breweries.push(brewery);
                     }
                 });
@@ -57,67 +64,115 @@ function handleStateForm(){
         }
         $('#state-form').addClass('hidden');
         $('#search-form').removeClass('hidden');
-        initAutoComplete();
-        let instructionState = makeTitleCase(chosenState);
-        $('#starting-label').text(`Enter your starting address in ${instructionState}.`);
     });
 
 
     
 }
 
-function handleBreweries(){
-    const origin = $('#starting-location').val();
-    const results = [];
+async function getLatLong(){
     breweries.forEach(brewery => {
-        brewery.distanceToLook = $(`#distance-list option:selected`).val();
-        const destination = `${brewery.street}, ${brewery.postal_code}`
-        checkDistance(origin, destination).then(function(response){
-            if(callback(response, brewery)){
-                results.push(callback(response, brewery));
-            }
-            displayResults(results);
-        }).catch(function(err){
-            if(`${err}`.includes('TypeError: Cannot read property')){
-                $('#starting-location-label').html('<span class="red">Address was not found: </span>Please try another address');
-            }
+      const url = `https://dev.virtualearth.net/REST/v1/Locations?key=${window.atob(key)}&CountryRegion=US&adminDistrict=${getStateCode(brewery.state)}&locality=${encodeURI(brewery.city)}&postalCode=${brewery.postal_code}&addressLine=${encodeURI(brewery.street.trim())}`;
+  
+      if(!brewery.latitude){
+        sleep(100)
+        fetch(url).then(response => response.json()).then(responseJson => {
+          brewery.latitude = responseJson.resourceSets[0].resources[0].point.coordinates[0]
+         brewery.longitude = responseJson.resourceSets[0].resources[0].point.coordinates[1]
+      }).catch(err => {
+          console.log(err); 
+          console.log(url);
         });
+      }
+    })
+  }
+  
+  function loadGoogleMapsLibrary(){
+      $.getScript(window.atob("aHR0cHM6Ly9tYXBzLmdvb2dsZWFwaXMuY29tL21hcHMvYXBpL2pzP2tleT1BSXphU3lCWlJWMEJmM2s5N1M0dnpsOXc1UDlJV1hqM0djeFNRNE0mbGlicmFyaWVzPXBsYWNlcw=="), function () {
+        console.log("script loaded")
+       });
+   }
+  
+  async function geocodeAddress(address){
+    let dfd = $.Deferred();
+    //const address = "3947 costillo ct brighton co";
+    const service = new google.maps.Geocoder;
+    service.geocode(
+      {
+        address: address
+        }, function(response, status){
+        sleep(150);
+        if (status == 'OK'){
+          dfd.resolve(response);
+        }
+          dfd.reject(status);
     });
-    
+    return dfd.promise();
   }
 
-function checkDistance(origin, destination){
-  const service = new google.maps.DistanceMatrixService();
-  const dfd = $.Deferred();
-  service.getDistanceMatrix(
-  {
-    origins: [origin],
-    destinations: [destination],
-    travelMode: 'DRIVING',
-    unitSystem: google.maps.UnitSystem.IMPERIAL
-  }, function(response, status){
-        if (status == google.maps.DistanceMatrixStatus.OK){
-            dfd.resolve(response);
-        }else{
-            dfd.reject(status);
+  // Convert snake case to title case
+function makeTitleCase (myState) {
+	myState = myState.toLowerCase().split('_');
+	for (var i = 0; i < myState.length; i++) {
+		myState[i] = myState[i].charAt(0).toUpperCase() + myState[i].slice(1);
+	}
+	return myState.join(' ');
+};
+  
+  async function handleBreweries(){
+    const destinationsA =[]
+    const originsA = [];
+    const results= [];
+    $('.cta-button').val('Loading, please wait...');
+    $('.cta-button').disabled = true;
+    const url = `https://dev.virtualearth.net/REST/v1/Routes/DistanceMatrix?key=${window.atob(key)}`
+    await getLatLong();
+    console.log('longitude and latitude gotten')
+    await geocodeAddress($('#starting-location').val()).then(response => {
+          originsA.push({
+            latitude: response[0].geometry.location.toString().split(",")[0].split("(")[1],
+            longitude: response[0].geometry.location.toString().split(",")[1].split(")")[0]
+            });
+    }).catch(err => console.log(err));
+    console.log("starting address geocoded")
+    breweries.forEach(brewery => {
+      const dest = {
+        latitude: brewery.latitude,
+        longitude: brewery.longitude
+        };
+      destinationsA.push(dest);
+    });
+    const data = {origins: originsA, destinations: destinationsA, travelMode: 'driving', distanceUnit: 'mi'}
+    await postData(url, data).then(response => {
+      const responseResults = response.resourceSets[0].resources[0].results
+      responseResults.forEach(result => {
+        breweries[result.destinationIndex].distance = result.travelDistance;
+        
+      });
+      breweries.forEach(brewery => {
+        if(Math.round(brewery.distance) <= $(`#distance-list option:selected`).val() && (brewery.distance) >= 0){
+          results.push(brewery);
         }
-  });
-  return dfd.promise();
-}
-
-function callback(response, brewery) {
-    const distanceToLook = brewery.distanceToLook;
-    const distance = parseInt(response.rows[0].elements[0].distance.text.split(" ")[0].split(",").join(""), 10);
-    if(distance <= distanceToLook){
-      brewery.distance = distance;  
-      return brewery;
-    }
-}
-
-function getIndex(id){
-    return breweries.findIndex(brewery => brewery.id === id);
-}
-
+      });
+    });
+    displayResults(results);
+  }
+  
+  async function postData(url, data) {
+    // Default options are marked with *
+    const response = await fetch(url, {
+      method: 'POST', // *GET, POST, PUT, DELETE, etc.
+      mode: 'cors', // no-cors, *cors, same-origin
+      cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': 'insertLengthOfHTTPBody'
+      },
+      body: JSON.stringify(data) 
+    });
+    return await response.json(); 
+  }
+  
 function displayResults(results){
     const arr = [];
     if(results.length === 0){
@@ -133,10 +188,8 @@ function displayResults(results){
     }
     $('#display-results').removeClass("hidden");
     $('.cta-button').val('Click to start');
-    setTimeout(function() { 
-        $('.cta-button').disabled = false;
-     }, 1000);
-     
+
+    $('.cta-button').disabled = false;
 }
 
 // Check if values exist for each result key and print only if they exist
@@ -167,8 +220,6 @@ function handleSearchForm(){
     $('#search-form').submit(event => {
         event.preventDefault();
         const address = $('#starting-location').val();
-        $('.cta-button').val('Loading, please wait...');
-        $('.cta-button').disabled = true;
         handleBreweries();
     })
     $('.go_back').click(function (){
