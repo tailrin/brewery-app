@@ -44,7 +44,7 @@ jQuery
 
 ## Contributors
 
-Joshua Hahn [https://github.com/tailrin](https://github.com/tailrin)
+Joshua Hahn [https://github.com/tailrin](https://github.com/tailrin) <br />
 Ieva Vega [https://github.com/theieva](https://github.com/theieva)
 
 
