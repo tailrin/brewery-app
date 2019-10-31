@@ -13,7 +13,7 @@
 
 ## Summary
 
-Using the Open Breweries,Bing Maps, and Google Maps APIs, we list breweries within a specified mile range from user’s entered location. 
+Using the Open Breweries, Bing Maps, and Google Maps APIs, we list breweries within a specified mile range from user’s entered location. 
 
 After submitting their starting address, the user will receive a list of brewery results in order of closest to farthest distance. 
 
