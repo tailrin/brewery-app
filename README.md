@@ -19,11 +19,11 @@ After submitting their starting address, the user will receive a list of brewery
 
 Based on information available from Open Brewery API, user will have access to:
 
-• Brewery Name
-• Brewery Type
-• Brewery Address
-• Brewery Website
-• Brewery Phone Number
+• Brewery Name <br />
+• Brewery Type <br />
+• Brewery Address <br />
+• Brewery Website <br />
+• Brewery Phone Number <br />
 
 Clicking on the address leads to a new tab opening in Google Maps of the location.
 
@@ -38,9 +38,9 @@ Javascript
 jQuery
 
 ### APIs
-[Open Brewery API](https://www.openbrewerydb.org/)
-[Google Maps API](https://developers.google.com/maps/documentation/javascript/libraries)
-[Bing Distance Matrix API](https://docs.microsoft.com/en-us/bingmaps/rest-services/routes/calculate-a-distance-matrix)
+[Open Brewery API](https://www.openbrewerydb.org/) <br />
+[Google Maps API](https://developers.google.com/maps/documentation/javascript/libraries) <br />
+[Bing Distance Matrix API](https://docs.microsoft.com/en-us/bingmaps/rest-services/routes/calculate-a-distance-matrix) <br />
 
 ## Contributors
 
